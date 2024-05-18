@@ -23,4 +23,4 @@ jobs:
       IMAGE_TAGS: '1.0.0'
       IMAGE_NAME: 'reusable-workflows-integration-test'
       DOTNET_VERSION: '8.0.x'
-      ACR_URL: ${{ env.ACR_NAME }}
+      ACR_URL: "${{ secrets.ACR_NAME }}"
