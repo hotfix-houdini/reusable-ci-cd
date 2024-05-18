@@ -2,8 +2,8 @@ name: cicd-integration-test
 
 on:
   workflow_dispatch:
-    
- permissions:
+  
+permissions:
     id-token: write
     contents: read
 
