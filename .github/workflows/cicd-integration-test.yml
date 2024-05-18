@@ -9,13 +9,13 @@ permissions:
 
 jobs:
   ci: 
-    uses: hotfix-houdini/reusable-ci-cd/.github/workflows/resuable-dotnet-ci.yml@main
+    uses: hotfix-houdini/reusable-ci-cd/.github/workflows/reusable-dotnet-ci.yml@main
     with:
       BRANCH: ${{ github.ref }}
       SOLUTION_FILE_PATH: './test-code/HelloWorld/HelloWorld.sln'
       DOTNET_VERISON: '8.0.x'
   cd:
-    uses: hotfix-houdini/reusable-ci-cd/.github/workflows/resuable-dotnet-cd-image.yml@main
+    uses: hotfix-houdini/reusable-ci-cd/.github/workflows/reusable-dotnet-cd-image.yml@main
     needs: [ci]
     secrets: inherit
     with:
