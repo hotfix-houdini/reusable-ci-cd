@@ -2,6 +2,11 @@ name: cicd-integration-test
 
 on:
   workflow_dispatch:
+    inputs: 
+      ACR:
+        description: 'The ACR to publish to'
+        type: string
+        required: true
   
 permissions:
     id-token: write
@@ -23,4 +28,4 @@ jobs:
       IMAGE_TAGS: '1.0.0'
       IMAGE_NAME: 'reusable-workflows-integration-test'
       DOTNET_VERSION: '8.0.x'
-      ACR_URL: "${{ secrets.ACR_NAME }}"
+      ACR_URL: ${{ inputs.ACR }}
