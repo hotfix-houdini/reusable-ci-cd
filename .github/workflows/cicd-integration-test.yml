@@ -1,0 +1,26 @@
+name: cicd-integration-test
+
+on:
+  workflow_dispatch:
+    
+ permissions:
+    id-token: write
+    contents: read
+
+jobs:
+  ci: 
+    uses: hotfix-houdini/reusable-ci-cd/.github/workflows/resuable-dotnet-ci.yml@main
+    with:
+      BRANCH: ${{ github.ref }}
+      SOLUTION_FILE_PATH: './test-code/HelloWorld/HelloWorld.sln'
+      DOTNET_VERISON: '8.0.x'
+  cd:
+    uses: hotfix-houdini/reusable-ci-cd/.github/workflows/resuable-dotnet-cd-image.yml@main
+    needs: [ci]
+    secrets: inherit
+    with:
+      CSPROJ_PATH: './test-code/HelloWorld/HelloWorld/HelloWorld.csproj'
+      IMAGE_TAGS: '1.0.0'
+      IMAGE_NAME: 'reusable-workflows-integration-test'
+      DOTNET_VERISON: '8.0.x'
+      ACR_URL: ${{ secrets.ACR_NAME }}

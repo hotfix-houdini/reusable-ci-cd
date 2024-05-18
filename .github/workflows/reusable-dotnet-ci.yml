@@ -1,0 +1,40 @@
+name: reusable-dotnet-ci
+
+on:
+  workflow_call:
+    inputs:
+      BRANCH:
+        type: string
+      SOLUTION_FILE_PATH:
+        type: string
+        required: true
+      DOTNET_VERISON:
+        type: string
+        required: true
+        default: '8.0.x'
+  
+jobs:
+  dotnet-ci:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:latest
+        options: --privileged
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.BRANCH || github.ref }}
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.DOTNET_VERISON }}
+
+    - name: Install dependencies
+      run: dotnet restore ${{ inputs.SOLUTION_FILE_PATH }}
+
+    - name: Build
+      run: dotnet build ${{ inputs.SOLUTION_FILE_PATH }} --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test ${{ inputs.SOLUTION_FILE_PATH }} --no-restore --blame-hang-timeout 10000 --blame

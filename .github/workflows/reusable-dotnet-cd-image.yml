@@ -1,0 +1,49 @@
+name: reusable-dotnet-cd-image
+on:
+  workflow_call:
+    inputs:
+      CSPROJ_PATH:
+        required: true
+        type: string
+      IMAGE_TAGS:
+        required: true
+        type: string
+      IMAGE_NAME:
+        required: true
+        type: string
+      DOTNET_VERSION:
+        required: false
+        type: string
+        default: '8.0.x'
+      ACR_URL:
+        required: false
+        type: string
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+  dotnet-cd-image:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+  
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.DOTNET_VERSION }}
+
+    - uses: azure/login@v2
+      name: Sign in to Azure
+      with:
+        client-id: ${{ secrets.AZURE_FEDERATED_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Login to ACR
+      run: |
+        az acr login --name ${{ inputs.ACR_URL }}
+
+    - name: publish
+      run: dotnet publish ${{ inputs.CSPROJ_PATH }} -c Release --os linux --arch x64 /t:PublishContainer /p:ContainerImageTags='"latest;${{ inputs.IMAGE_TAGS }}"' /p:ContainerRegistry=${{ inputs.ACR_URL }} /p:ContainerRepository=${{ inputs.IMAGE_NAME }}
