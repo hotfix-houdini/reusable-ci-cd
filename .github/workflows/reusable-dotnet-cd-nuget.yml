@@ -1,0 +1,45 @@
+name: reusable-dotnet-cd-nuget
+
+on:
+  workflow_call:
+    inputs:
+      CSPROJ_PATH:
+        required: true
+        type: string
+      DOTNET_VERSION:
+        required: false
+        type: string
+      NUGET_PACKAGE_VERSION:
+        required: true
+        type: string
+      PACKAGE_SOURCE:
+        required: true
+        type: string
+        default: 'https://api.nuget.org/v3/index.json'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  dotnet-cd-nuget:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ inputs.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ inputs.CSPROJ_PATH }}
+
+      - name: Build with dotnet
+        run: dotnet build ${{ inputs.CSPROJ_PATH }} --configuration Release --no-restore
+
+      - name: Pack with dotnet
+        run: dotnet pack ${{ inputs.CSPROJ_PATH }} --configuration Release --output nupkgs /p:PackageVersion=${{ inputs.NUGET_PACKAGE_VERSION }}
+
+      - name: Publish to NuGet
+        run: dotnet nuget push nupkgs/*.nupkg --source ${{ inputs.PACKAGE_SOURCE }} --api-key ${{ secrets.NUGET_API_KEY }}
