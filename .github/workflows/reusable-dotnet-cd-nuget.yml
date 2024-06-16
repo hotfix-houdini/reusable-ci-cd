@@ -16,6 +16,9 @@ on:
         required: true
         type: string
         default: 'https://api.nuget.org/v3/index.json'
+      INTERNAL_NUGET_FEED:
+        type: string
+        required: false
 
 permissions:
   id-token: write
@@ -31,6 +34,11 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ inputs.DOTNET_VERSION }}
+
+      - name: Add GitHub Packages NuGet source
+        if: ${{ inputs.INTERNAL_NUGET_FEED != '' }}
+        run: |
+          dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.INTERNAL_NUGET_FEED }}/index.json"
 
       - name: Restore dependencies
         run: dotnet restore ${{ inputs.CSPROJ_PATH }}
