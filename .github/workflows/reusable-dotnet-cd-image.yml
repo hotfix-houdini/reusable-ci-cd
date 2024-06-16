@@ -1,4 +1,5 @@
 name: reusable-dotnet-cd-image
+
 on:
   workflow_call:
     inputs:
@@ -18,6 +19,9 @@ on:
       ACR_URL:
         required: false
         type: string
+      INTERNAL_NUGET_FEED:
+        type: string
+        required: false
 
 permissions:
     id-token: write
@@ -34,6 +38,11 @@ jobs:
       with:
         dotnet-version: ${{ inputs.DOTNET_VERSION }}
 
+    - name: Add GitHub Packages NuGet source
+      if: ${{ inputs.INTERNAL_NUGET_FEED != '' }}
+      run: |
+        dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.INTERNAL_NUGET_FEED }}/index.json"
+        
     - uses: azure/login@v2
       name: Sign in to Azure
       with:
