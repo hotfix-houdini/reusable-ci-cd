@@ -19,6 +19,9 @@ on:
       INTERNAL_NUGET_FEED:
         type: string
         required: false
+      RELEASE_NOTES_PATH:
+        type: string
+        required: false
 
 permissions:
   id-token: write
@@ -60,3 +63,26 @@ jobs:
           git push origin v${{ inputs.NUGET_PACKAGE_VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Construct Release Notes
+        id: release_notes
+        run: |
+          if [ -n "${{ inputs.RELEASE_NOTES_PATH }}" ] && [ -f "${{ inputs.RELEASE_NOTES_PATH }}" ]; then
+            cat "${{ inputs.RELEASE_NOTES_PATH }}" > release-body.md
+          else
+            echo "### Automated Release" > release-body.md
+            echo "This release was automated and contains updates." >> release-body.md
+          fi
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ inputs.NUGET_PACKAGE_VERSION }}
+          release_name: Release v${{ inputs.NUGET_PACKAGE_VERSION }}
+          body: "$(cat release-body.md)"
+          draft: false
+          prerelease: false
+        # todo add files
