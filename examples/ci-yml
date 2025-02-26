@@ -1,0 +1,21 @@
+name: ci-dotnet
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      BRANCH:
+        description: 'Branch of source code'
+        required: true
+        default: 'main'
+
+jobs:
+  ci:
+    uses: hotfix-houdini/reusable-ci-cd/.github/workflows/reusable-dotnet-ci.yml@v1
+    with:
+      BRANCH: ${{ inputs.BRANCH || github.ref }}
+      SOLUTION_FILE_PATH: './src/Some.sln'
+      DOTNET_VERISON: '9.x'
