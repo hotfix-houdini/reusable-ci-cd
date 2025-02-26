@@ -3,6 +3,9 @@ name: reusable-dotnet-cd-nuget
 on:
   workflow_call:
     inputs:
+      SOLUTION_FILE_PATH:
+        type: string
+        required: true
       CSPROJ_PATH:
         required: true
         type: string
@@ -50,7 +53,7 @@ jobs:
         run: dotnet build ${{ inputs.CSPROJ_PATH }} --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test ${{ inputs.CSPROJ_PATH }} --no-restore --blame-hang-timeout 60000 --blame
+        run: dotnet test ${{ inputs.SOLUTION_FILE_PATH }} --no-restore --blame-hang-timeout 60000 --blame
 
       - name: Pack with dotnet
         run: dotnet pack ${{ inputs.CSPROJ_PATH }} --configuration Release --output nupkgs /p:PackageVersion=${{ inputs.NUGET_PACKAGE_VERSION }}
