@@ -51,10 +51,10 @@ jobs:
           dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.INTERNAL_NUGET_FEED }}/index.json"
 
       - name: Restore dependencies
-        run: dotnet restore ${{ inputs.CSPROJ_PATH }}
+        run: dotnet restore ${{ inputs.SOLUTION_FILE_PATH }}
 
       - name: Build with dotnet
-        run: dotnet build ${{ inputs.CSPROJ_PATH }} --configuration Release --no-restore
+        run: dotnet build ${{ inputs.SOLUTION_FILE_PATH }} --configuration Release --no-restore
 
       - name: Test
         run: dotnet test ${{ inputs.SOLUTION_FILE_PATH }} --no-restore --blame-hang-timeout 60000 --blame
