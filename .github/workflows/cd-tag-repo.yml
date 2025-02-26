@@ -1,0 +1,26 @@
+name: cd-tag-repo
+run-name: Tag v${{ github.event.inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to tag the repository with (e.g., 1.0.0)'
+        required: true
+        default: '1.0.0'
+        type: string
+
+jobs:
+  create_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create and push tag
+        run: |
+          TAG_NAME=v${{ github.event.inputs.version }}
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
