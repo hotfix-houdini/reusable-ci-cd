@@ -11,6 +11,8 @@
   - publish to either nuget.org or an internal nuget feed with the same version
   - creates a release on the repo, optionally providing a release body from a markdown file in the repo.
 
+ **See the Examples folder for actual exmaples of using these workflows from my own repos.**
+
 # Adding Docker Publish support to a .net Project
 Add this to your CS Proj file:
 ```xml
