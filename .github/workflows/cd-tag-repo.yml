@@ -9,6 +9,9 @@ on:
         required: true
         default: '1.0.0'
         type: string
+        
+permissions:
+    contents: write
 
 jobs:
   create_tag:
