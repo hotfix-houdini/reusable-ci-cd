@@ -1,0 +1,32 @@
+name: cd-nuget
+run-name: Deploy NuGet Package v${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'NuGet Package Version'
+        required: true
+        default: '1.0.0'
+
+permissions:
+    id-token: write 
+    contents: write
+    packages: read
+
+jobs:
+  cd:
+    uses: hotfix-houdini/reusable-ci-cd/.github/workflows/reusable-dotnet-cd-nuget.yml@v1
+    permissions:
+      id-token: write 
+      contents: write
+      packages: read
+    secrets: inherit
+    with:
+      SOLUTION_FILE_PATH: './src/Some.sln'
+      CSPROJ_PATH: './src/apps/Some.Client/Some.Client.csproj'
+      DOTNET_VERSION: '9.x'
+      NUGET_PACKAGE_VERSION: '${{ inputs.version }}'
+      RELEASE_NOTES_PATH: './src/apps/Some.Client/release-notes.md'
+      PACKAGE_SOURCE: 'https://nuget.pkg.github.com/some-internal-feed/index.json' # optional support for github-hosted nuget feeds
+      INTERNAL_NUGET_FEED: 'some-internal-feed'
