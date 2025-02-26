@@ -33,6 +33,10 @@ permissions:
 jobs:
   dotnet-cd-nuget:
     runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:latest
+        options: --privileged
     steps:
       - uses: actions/checkout@v4
 
