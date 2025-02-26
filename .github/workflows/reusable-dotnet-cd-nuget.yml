@@ -73,16 +73,14 @@ jobs:
             echo "### Automated Release" > release-body.md
             echo "This release was automated and contains updates." >> release-body.md
           fi
+          echo "RELEASE_BODY=$(cat release-body.md)" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v${{ inputs.NUGET_PACKAGE_VERSION }}
-          release_name: Release v${{ inputs.NUGET_PACKAGE_VERSION }}
-          body: "$(cat release-body.md)"
-          draft: false
-          prerelease: false
-        # todo add files
+          name: Release v${{ inputs.NUGET_PACKAGE_VERSION }}
+          body: ${{ env.RELEASE_BODY }}
