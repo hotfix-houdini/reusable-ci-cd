@@ -74,20 +74,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Construct Release Notes
-        id: release_notes
-        run: |
-          if [ -n "${{ inputs.RELEASE_NOTES_PATH }}" ] && [ -f "${{ inputs.RELEASE_NOTES_PATH }}" ]; then
-            cat "${{ inputs.RELEASE_NOTES_PATH }}" > release-body.md
-          else
-            echo "### Automated Release" > release-body.md
-            echo "This release was automated and contains updates." >> release-body.md
-          fi
-          # Use multiline syntax for GitHub Actions
-          echo "RELEASE_BODY<<EOF" >> $GITHUB_ENV
-          cat release-body.md >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -96,4 +82,7 @@ jobs:
         with:
           tag_name: v${{ inputs.NUGET_PACKAGE_VERSION }}
           name: Release v${{ inputs.NUGET_PACKAGE_VERSION }}
-          body: ${{ env.RELEASE_BODY }}
+          body_path: ${{ inputs.RELEASE_NOTES_PATH }}
+          body: |
+            ### Automated Release
+            This release was automated and contains updates.
