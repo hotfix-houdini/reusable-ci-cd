@@ -20,10 +20,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create and push tag
+      - name: Create and push tag for version
         run: |
           TAG_NAME=v${{ github.event.inputs.version }}
           git tag $TAG_NAME
           git push origin $TAG_NAME
+
+      - name: Create and push Major tag
+        run: |
+          # Extract the major version from the input version
+          MAJOR_VERSION=$(echo "${{ github.event.inputs.version }}" | cut -d. -f1)
+          MAJOR_TAG="v$MAJOR_VERSION"
+
+          # Force update the major tag to point to the latest commit
+          git tag -f $MAJOR_TAG
+          git push origin -f $MAJOR_TAG  # Force push the updated major tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
