@@ -55,4 +55,6 @@ jobs:
         az acr login --name ${{ inputs.ACR_URL }}
 
     - name: publish
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: dotnet publish ${{ inputs.CSPROJ_PATH }} -c Release --os linux --arch x64 /t:PublishContainer /p:ContainerImageTags='"latest;${{ inputs.IMAGE_TAGS }}"' /p:ContainerRegistry=${{ inputs.ACR_URL }} /p:ContainerRepository=${{ inputs.IMAGE_NAME }}
