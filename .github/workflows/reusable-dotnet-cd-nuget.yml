@@ -55,6 +55,8 @@ jobs:
           dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.INTERNAL_NUGET_FEED }}/index.json"
 
       - name: Restore dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: dotnet restore ${{ inputs.SOLUTION_FILE_PATH }}
 
       - name: Build with dotnet
