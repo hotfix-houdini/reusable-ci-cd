@@ -25,6 +25,10 @@ on:
       RELEASE_NOTES_PATH:
         type: string
         required: false
+      TAG_PREFIX:
+        type: string
+        required: false
+        default: ''
 
 permissions:
   id-token: write
@@ -67,10 +71,11 @@ jobs:
 
       - name: Create and Push Git Tag
         run: |
+          TAG_NAME="${{ inputs.TAG_PREFIX }}-v${{ inputs.NUGET_PACKAGE_VERSION }}"
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git tag v${{ inputs.NUGET_PACKAGE_VERSION }}
-          git push origin v${{ inputs.NUGET_PACKAGE_VERSION }}
+          git tag "$TAG_NAME"
+          git push origin "$TAG_NAME"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -80,8 +85,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ inputs.NUGET_PACKAGE_VERSION }}
-          name: Release v${{ inputs.NUGET_PACKAGE_VERSION }}
+          tag_name: ${{ inputs.TAG_PREFIX }}-v${{ inputs.NUGET_PACKAGE_VERSION }}
+          name: Release ${{ inputs.TAG_PREFIX }}-v${{ inputs.NUGET_PACKAGE_VERSION }}
           body_path: ${{ inputs.RELEASE_NOTES_PATH }}
           body: |
             ### Automated Release
