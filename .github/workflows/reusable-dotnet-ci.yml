@@ -40,15 +40,10 @@ jobs:
         dotnet nuget add source --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/${{ inputs.INTERNAL_NUGET_FEED }}/index.json"
 
     - name: Install dependencies
-      if: ${{ inputs.INTERNAL_NUGET_FEED == '' }}
-      run: dotnet restore ${{ inputs.SOLUTION_FILE_PATH }}
-
-    - name: Install dependencies With Internal Feed
-      if: ${{ inputs.INTERNAL_NUGET_FEED != '' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: dotnet restore ${{ inputs.SOLUTION_FILE_PATH }}
-
+      
     - name: Build
       run: dotnet build ${{ inputs.SOLUTION_FILE_PATH }} --configuration Release --no-restore
 
