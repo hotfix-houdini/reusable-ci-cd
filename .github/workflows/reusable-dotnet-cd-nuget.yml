@@ -33,6 +33,7 @@ on:
 permissions:
   id-token: write
   contents: write
+  packages: read
 
 jobs:
   dotnet-cd-nuget:
