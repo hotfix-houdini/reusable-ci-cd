@@ -21,3 +21,9 @@ Add this to your CS Proj file:
 	<EnableSdkContainerSupport>true</EnableSdkContainerSupport>
 </PropertyGroup>
 ```
+
+# Developer Workflow
+1. branch and make the desired changes.
+2. in a client repo, target the @branch version of the workflow and verify functionality.
+3. merge into mainline
+4. run `cd-tag-repo` with the appropriate tag version so clients can start using it, being cognizant of semantic versioning.
