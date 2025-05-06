@@ -61,13 +61,13 @@ jobs:
         run: dotnet restore ${{ inputs.SOLUTION_FILE_PATH }}
 
       - name: Build with dotnet
-        run: dotnet build ${{ inputs.SOLUTION_FILE_PATH }} --configuration Release --no-restore /p:GeneratePackageOnBuild=false
+        run: dotnet build ${{ inputs.SOLUTION_FILE_PATH }} --configuration Release --no-restore
 
       - name: Test
         run: dotnet test ${{ inputs.SOLUTION_FILE_PATH }} --no-restore --blame-hang-timeout 60000 --blame
 
       - name: Pack with dotnet
-        run: dotnet pack ${{ inputs.CSPROJ_PATH }} --configuration Release --no-build --output nupkgs /p:PackageVersion=${{ inputs.NUGET_PACKAGE_VERSION }}
+        run: dotnet pack ${{ inputs.CSPROJ_PATH }} --configuration Release --output nupkgs /p:PackageVersion=${{ inputs.NUGET_PACKAGE_VERSION }}  /p:GeneratePackageOnBuild=false
 
       - name: Publish to NuGet
         run: dotnet nuget push nupkgs/*.nupkg --source ${{ inputs.PACKAGE_SOURCE }} --api-key ${{ secrets.NUGET_API_KEY }}
